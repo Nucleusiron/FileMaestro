@@ -70,7 +70,7 @@ left_thread = threading.Thread(target = left_kb_delay)
 def mode_change_delay():
     global mode_delay
     global mode_thread
-    time.sleep(1)
+    time.sleep(5)
     mode_delay = 0
     mode_thread = threading.Thread(target = mode_change_delay)
 
@@ -138,8 +138,9 @@ cap.set(4, cam_h)
 
 #fps
 pTime = 0
-frameR = 100
-frameR2 = frameR // 2
+frameX = 100
+frameY = 175
+frameY2 = 25
 
 
 # Volume setup------------------------------------------------------------
@@ -169,13 +170,11 @@ screen_h = calibration.screen_h
 cv2.destroyAllWindows()
 #process.kill()"""
 
-
-
 while True:
     success, img = cap.read()
     img = cv2.flip(img, 1)
     hands , img = detector.findHands(img, flipType=False)
-    
+
     if hands:
         lmlist = hands[0]['lmList']
         #Frame rate
@@ -184,7 +183,7 @@ while True:
         pTime=cTime
         cv2.putText(img, str(int(fps)), (20,50),cv2.FONT_HERSHEY_PLAIN,3,
                     (255,0,0),3)
-        cv2.rectangle(img, (frameR, frameR2), (cam_w - frameR, cam_h - 2*frameR2), (255, 0, 255), 2)
+        cv2.rectangle(img, (frameX, frameY2), (cam_w - frameX, cam_h - frameY), (255, 0, 255), 2)
 
         fingers = detector.fingersUp(hands[0])
         ind_x, ind_y = lmlist[8][0], lmlist[8][1]
@@ -206,8 +205,8 @@ while True:
             #Mouse movement        
             if fingers == [1,1,0,0,0]:
 
-                mouse_x = int(np.interp(ind_x, (frameR, cam_w - frameR), (0, 1920)))
-                mouse_y = int(np.interp(ind_y, (frameR2, cam_h - 2* frameR2), (0, 1080)))
+                mouse_x = int(np.interp(ind_x, (frameX, cam_w - frameX), (0, 1920)))
+                mouse_y = int(np.interp(ind_y, (frameY2, cam_h - frameY), (0, 1080)))
                 mouse.move(mouse_x,mouse_y)
             
             #Mouse left click
